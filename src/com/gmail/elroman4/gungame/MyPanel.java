@@ -1,5 +1,8 @@
 package com.gmail.elroman4.gungame;
 
+import com.gmail.elroman4.gungame.objects.GameObject;
+import com.gmail.elroman4.gungame.objects.Tank;
+
 import javax.imageio.ImageIO;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
@@ -14,15 +17,9 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.URL;
 
-/**
- * Created with IntelliJ IDEA.
- * User: ren
- * Date: 18.05.13
- * Time: 13:30
- * To change this template use File | Settings | File Templates.
- */
-class MyPanel extends JPanel {
+public class MyPanel extends JPanel {
 
+    Tank tank;
     MidiChannel channel; // The channel we play on: 10 is for percussion
 
     int velocity = 64; // Default volume is 50%
@@ -31,14 +28,11 @@ class MyPanel extends JPanel {
 
 
     private static final long serialVersionUID = 1L;
-    String gun = "o-I-o", bomb = "o", alien = "I-()-I";
-    int x = 0, y = 0, x2 = 0, y2 = 0, x3 = -30, y3 = -30;
-    boolean start = true;
+    String bomb = "o", alien = "I-()-I";
+    int x2 = 0, y2 = 0, x3 = -30, y3 = -30;
     int stage;
     Timer[] array_bomb = new Timer[10];
     Timer[] array_alien = new Timer[10];
-
-    Toolkit tk = Toolkit.getDefaultToolkit();
 
     public MyPanel() throws MidiUnavailableException {
         addKeyListener(new MyKey());
@@ -50,12 +44,11 @@ class MyPanel extends JPanel {
 
     public void paintComponent(Graphics g) {
 
+        createGameObjects();
         calculateCoords();
 
         super.paintComponent(g);
-        // setBackground()
-        ClassLoader  cldr = this.getClass() .getClassLoader();
-
+        ClassLoader cldr = this.getClass().getClassLoader();
 
         try {
             URL spaceURL = cldr.getResource("space.png");
@@ -64,13 +57,8 @@ class MyPanel extends JPanel {
         } catch (IOException ex) {
         }
 
-        try {
-            URL tankURL = cldr.getResource("tank.png");
-            Image tankimg = ImageIO.read(tankURL);
-            g.drawImage(tankimg, x, y - 20, 25, 25, null);
-        } catch (IOException ex) {
-            g.drawString(gun, x, y);
-        }
+
+        paintGameObj(tank, g);
 
         try {
             URL alienURL = cldr.getResource("alien1.png");
@@ -88,27 +76,23 @@ class MyPanel extends JPanel {
         } catch (IOException ex) {
             g.drawString(bomb, x2, y2);
         }
-        //g.drawString(bomb, x2, y2);
 
         g.drawLine(0, 15, getWidth(), 15);
-        // g.fiLine(0, 15, getWidth(), 15);
         g.drawString("Killed alien invaders: " + stage, getWidth() - 200, 10);
 
     }
 
-    private void calculateCoords() {
-        if (start) {
-            if (x < 10)
-                x = getWidth() / 2 - 3;
-            if (y < 10)
-                y = getHeight();
-            start = false;
-        } else {
-            if (x < 10)
-                x = 10;
+    private void createGameObjects() {
+        if (tank == null) {
+            tank = new Tank(this);
         }
-        if (x > getWidth() - 40)
-            x = getWidth() - 40;
+    }
+
+    private void paintGameObj(GameObject obj, Graphics g) {
+        g.drawImage(obj.getPicture(), obj.getX(), obj.getY(), null);
+    }
+
+    private void calculateCoords() {
 
         if ((x3 > 0) && (x2 >= x3 - 5) && (x2 < (x3 + 30)) && (y2 >= y3)
                 && (y2 < (y3 + 10))) {
@@ -146,11 +130,13 @@ class MyPanel extends JPanel {
 
                     break;
                 case KeyEvent.VK_RIGHT:
-                    x += 5;
+                   tank.moveRight();
+
                     channel.noteOn(62, velocity);
                     break;
                 case KeyEvent.VK_LEFT:
-                    x -= 5;
+                    tank.moveLeft();
+
                     channel.noteOn(62, velocity);
                     break;
                 case KeyEvent.VK_ESCAPE:
@@ -185,7 +171,7 @@ class MyPanel extends JPanel {
 
         private void sendBomb() {
             if (array_bomb[0] == null) {
-                x2 = x + 10;
+                x2 = tank.getX() + 10;
                 y2 = getHeight() - 30;
                 Timer t_bomb = new Timer(100, new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
