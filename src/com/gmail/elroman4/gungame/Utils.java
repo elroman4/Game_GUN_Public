@@ -9,8 +9,8 @@ import java.net.URL;
 public class Utils {
 
     public static Image getImage(String name, int width, int height) {
-        ClassLoader cldr = Utils.class.getClassLoader();
-        URL url = cldr.getResource(name);
+        ClassLoader classLoader = Utils.class.getClassLoader();
+        URL url = classLoader.getResource(name);
         Image image;
         try {
             image = ImageIO.read(url);
