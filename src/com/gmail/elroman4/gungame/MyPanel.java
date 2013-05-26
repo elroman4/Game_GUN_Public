@@ -1,5 +1,7 @@
 package com.gmail.elroman4.gungame;
 
+import com.gmail.elroman4.gungame.objects.Alien;
+import com.gmail.elroman4.gungame.objects.Bomb;
 import com.gmail.elroman4.gungame.objects.GameObject;
 import com.gmail.elroman4.gungame.objects.Tank;
 
@@ -16,23 +18,28 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+
 
 public class MyPanel extends JPanel {
 
+    private static final long serialVersionUID = 1L;
     Tank tank;
-    MidiChannel channel; // The channel we play on: 10 is for percussion
-
-    int velocity = 64; // Default volume is 50%
+    Bomb bomb;
+    Alien alien;
+    MidiChannel channel;
+    int velocity = 64;
     int i = 30;
     Synthesizer synthesizer;
-
-
-    private static final long serialVersionUID = 1L;
-    String bomb = "o", alien = "I-()-I";
     int x2 = 0, y2 = 0, x3 = -30, y3 = -30;
     int stage;
-    Timer[] array_bomb = new Timer[10];
+    ArrayList<GameObject> array_obj = new ArrayList<GameObject>();
     Timer[] array_alien = new Timer[10];
+    Timer t_object = new Timer(100, new ActionListener() {
+        public void actionPerformed(ActionEvent event) {
+            repaint();
+   }
+    });
 
     public MyPanel() throws MidiUnavailableException {
         addKeyListener(new MyKey());
@@ -40,7 +47,18 @@ public class MyPanel extends JPanel {
         Synthesizer synthesizer = MidiSystem.getSynthesizer();
         synthesizer.open();
         channel = synthesizer.getChannels()[9];
+
+         t_object.start();
+
     }
+
+    private void clearObj(GameObject obj) {
+
+           if (obj.getClear()) {
+                array_obj.remove(obj);
+               obj = null;
+            }
+  }
 
     public void paintComponent(Graphics g) {
 
@@ -57,27 +75,11 @@ public class MyPanel extends JPanel {
         } catch (IOException ex) {
         }
 
-
-        paintGameObj(tank, g);
-
-        try {
-            URL alienURL = cldr.getResource("alien1.png");
-            Image alienimg = ImageIO.read(alienURL);
-            g.drawImage(alienimg, x3, y3, 25, 25, null);
-        } catch (IOException ex) {
-            g.drawString(alien, x3, y3);
+        for(GameObject obj:array_obj){
+            paintGameObj(obj, g);
+            clearObj(obj);
         }
-
-
-        try {
-            URL bombURL = cldr.getResource("Bomb.png");
-            Image bombimg = ImageIO.read(bombURL);
-            g.drawImage(bombimg, x2, y2, 5, 10, null);
-        } catch (IOException ex) {
-            g.drawString(bomb, x2, y2);
-        }
-
-        g.drawLine(0, 15, getWidth(), 15);
+      g.drawLine(0, 15, getWidth(), 15);
         g.drawString("Killed alien invaders: " + stage, getWidth() - 200, 10);
 
     }
@@ -85,11 +87,19 @@ public class MyPanel extends JPanel {
     private void createGameObjects() {
         if (tank == null) {
             tank = new Tank(this);
+            array_obj.add(tank);
+        }
+        if (alien == null) {
+            alien = new Alien(this);
+            array_obj.add(alien);
         }
     }
 
     private void paintGameObj(GameObject obj, Graphics g) {
+        if (obj != null) {
         g.drawImage(obj.getPicture(), obj.getX(), obj.getY(), null);
+        }
+
     }
 
     private void calculateCoords() {
@@ -109,23 +119,16 @@ public class MyPanel extends JPanel {
         @Override
         public void keyPressed(KeyEvent event) {
 
-            if ((array_bomb[0] != null) && (y2 < 0)) {
-                array_bomb[0].stop();
-                array_bomb[0] = null;
-                // this.channel.noteOn(72, velocity);
-            }
 
             if ((array_alien[0] != null) && (y3 < 0)) {
-                array_alien[0].stop();
-                array_alien[0] = null;
+                 array_alien[0] = null;
             }
-
-            // System.out.println("array_alien[0]    " + array_alien[0]);
-            sendAlien();
-
-            switch (event.getKeyCode()) {
+       switch (event.getKeyCode()) {
                 case KeyEvent.VK_SPACE:
-                    sendBomb();
+
+                    MyPanel pan = (MyPanel) event.getSource();
+
+                    sendBomb(pan);
                     channel.noteOn(35, velocity);
 
                     break;
@@ -149,47 +152,12 @@ public class MyPanel extends JPanel {
             repaint();
         }
 
-        private void sendAlien() {
-            if (array_alien[0] == null) {
-                x3 = (int) (Math.random() * (getWidth() - 40));
-                y3 = 25;
-                Timer t_alien = new Timer(100, new ActionListener() {
-                    public void actionPerformed(ActionEvent event) {
-                        if ((y3 >= 0) && (y3 < getHeight() - 5)) {
-                            y3 = y3 + 5;
-                        } else {
-                            x3 = -30;
-                            y3 = -30;
-                        }
-                        repaint();
-                    }
-                });
-                t_alien.start();
-                array_alien[0] = t_alien;
-            }
-        }
+        public void sendBomb(MyPanel myPanel) {
 
-        private void sendBomb() {
-            if (array_bomb[0] == null) {
-                x2 = tank.getX() + 10;
-                y2 = getHeight() - 30;
-                Timer t_bomb = new Timer(100, new ActionListener() {
-                    public void actionPerformed(ActionEvent event) {
-                        if (y2 > 25) {
-                            y2 = y2 - 5;
-                        } else {
-                            x2 = -1;
-                            y2 = -1;
-                        }
-                        repaint();
-                    }
-                });
-                t_bomb.start();
-
-                array_bomb[0] = t_bomb;
-
-            }
-        }
+                 bomb = new Bomb(myPanel ,tank.getCentreX(),tank.getGunHeight());
+                  System.out.println("Создана бомба "+ bomb);
+                    array_obj.add(bomb);
+    }
 
         @Override
         public void keyTyped(KeyEvent e) {
@@ -202,5 +170,7 @@ public class MyPanel extends JPanel {
         }
 
     }
+
+
 
 }
