@@ -41,6 +41,11 @@ public class Tank implements GameObject {
         return y;
     }
 
+    @Override
+    public boolean getClear() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void moveRight() {
         x = Math.min(maxX, (x + SPEED));
     }
@@ -48,4 +53,13 @@ public class Tank implements GameObject {
     public void moveLeft() {
         x = Math.max(minX, (x - SPEED));
     }
+
+    public int getCentreX() {
+        return (WIDTH/2)+this.getX();
+    }
+
+    public int getGunHeight() {
+        return this.getY()-HEIGHT;
+    }
+
 }
