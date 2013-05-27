@@ -12,14 +12,15 @@ public class Bomb implements GameObject {
     private final String PICTURE_FILE_NAME = "Bomb.png";
     private final int SPEED = 15;
 
-    private Image picture;
+    private static Image picture;
     private int x;
     private int y;
     private int minY;
     private int maxY;
 
     public Bomb(MyPanel panel, int startX, int startY) {
-        picture = Utils.getImage(PICTURE_FILE_NAME, WIDTH, HEIGHT);
+        if (picture == null)
+            picture = Utils.getImage(PICTURE_FILE_NAME, WIDTH, HEIGHT);
         x = startX;
         y = startY;
         minY = 0;
@@ -40,12 +41,12 @@ public class Bomb implements GameObject {
     @Override
     public int getY() {
         int nowY = y;
-        y = y-SPEED;
-        return Math.max(minY, nowY) ;
+        y = y - SPEED;
+        return Math.max(minY, nowY);
     }
 
     @Override
     public boolean getClear() {
-        return y<=minY;  //To change body of implemented methods use File | Settings | File Templates.
+        return y <= minY;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

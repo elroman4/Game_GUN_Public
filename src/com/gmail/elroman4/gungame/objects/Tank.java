@@ -19,7 +19,8 @@ public class Tank implements GameObject {
     private int maxX;
 
     public Tank(MyPanel panel) {
-        picture = Utils.getImage(PICTURE_FILE_NAME, WIDTH, HEIGHT);
+        if (picture == null)
+            picture = Utils.getImage(PICTURE_FILE_NAME, WIDTH, HEIGHT);
         x = (panel.getWidth() - WIDTH) / 2;
         y = panel.getHeight() - HEIGHT;
         minX = 0;
@@ -55,11 +56,11 @@ public class Tank implements GameObject {
     }
 
     public int getCentreX() {
-        return (WIDTH/2)+this.getX();
+        return (WIDTH / 2) + this.getX();
     }
 
     public int getGunHeight() {
-        return this.getY()-HEIGHT;
+        return this.getY() - HEIGHT;
     }
 
 }
