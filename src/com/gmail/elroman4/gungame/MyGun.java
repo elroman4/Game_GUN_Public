@@ -1,4 +1,4 @@
-package com.gmail.elroman4.gungame;
+//package com.gmail.elroman4.gungame;
 
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.*;

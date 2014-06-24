@@ -1,4 +1,4 @@
-package com.gmail.elroman4.gungame;
+//package com.gmail.elroman4.gungame;
 
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.*;
@@ -11,7 +11,7 @@ public class MyFrame extends JFrame {
         setTitle("Kill them all!");
         setSize(300, 300);
         setResizable(false);
-        getContentPane().add(new MyPanel());
+       // getContentPane().add(new MyPanel());
 
     }
 }
