@@ -1,50 +1,51 @@
 package com.gmail.elroman4.gungame.objects;
 
-
-import com.gmail.elroman4.gungame.MyPanel;
+import com.gmail.elroman4.gungame.GamePanel;
 import com.gmail.elroman4.gungame.Utils;
+import com.gmail.elroman4.gungame.objects.abstract_object.Enemy;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
-import java.awt.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
 
-public class Alien implements GameObject {
-    private final int WIDTH = 25;
-    private final int HEIGHT = 20;
-    private final String PICTURE_FILE_NAME = "alien1.png";
-    private final int SPEED = 10;
+public class Alien extends Enemy implements IUnit {
+    private final String stSoundCrush;
 
-    private static Image picture;
-    private int x;
-    private int y;
-    private int minY;
-    private int maxY;
+    public Alien() {
+        super("alien.png", 44, 36);
+        stSoundCrush = "E:/=Java=/workspace/Game_GUN/resources/gun10.wav";
+        X = (int) (Math.random() * (GamePanel.WIDTH - WIDTH));
+        Y = 50;
 
-    public Alien(MyPanel panel) {
-        if (picture == null)
-            picture = Utils.getImage(PICTURE_FILE_NAME, WIDTH, HEIGHT);
-        x = (int) (Math.random() * (panel.getWidth() - WIDTH));
-        y = HEIGHT;
-        minY = 0;
-        maxY = panel.getHeight();
-    }
+        minY = 50;
+        maxY = GamePanel.HEIGHT;
 
-    public Image getPicture() {
-        return picture;  //To change body of implemented methods use File | Settings | File Templates.
+        speed = 1;
+        musicOnDestroy = 52;
     }
 
     @Override
-    public int getX() {
-        return x;  //To change body of implemented methods use File | Settings | File Templates.
+    public int moveY() {
+        int oldY = Y;
+        Y += speed;
+        return Math.min(maxY, oldY);
     }
 
-    @Override
-    public int getY() {
-        int nowY = y;
-        y = y + SPEED;
-        return Math.min(maxY, nowY);  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
     public boolean getClear() {
-        return y > maxY;  //To change body of implemented methods use File | Settings | File Templates.
+        if (Y >= maxY)
+            clear = true;
+        return clear;
     }
+
+public void setClear(){
+    clear = true;
+    super.playSound(stSoundCrush);
+
 }
+
+
+
+}
+

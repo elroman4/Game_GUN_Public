@@ -1,66 +1,44 @@
+
 package com.gmail.elroman4.gungame.objects;
 
+import com.gmail.elroman4.gungame.GamePanel;
 import com.gmail.elroman4.gungame.MyPanel;
-import com.gmail.elroman4.gungame.Utils;
+import com.gmail.elroman4.gungame.objects.abstract_object.Army;
 
-import java.awt.*;
+public class Tank extends Army implements IUnit  {
 
-public class Tank implements GameObject {
+    public Tank() {
 
-    private final int WIDTH = 25;
-    private final int HEIGHT = 25;
-    private final String PICTURE_FILE_NAME = "tank.png";
-    private final int SPEED = 5;
+        super("tank.png", 32, 32);
 
-    private Image picture;
-    private int x;
-    private int y;
-    private int minX;
-    private int maxX;
-
-    public Tank(MyPanel panel) {
-        if (picture == null)
-            picture = Utils.getImage(PICTURE_FILE_NAME, WIDTH, HEIGHT);
-        x = (panel.getWidth() - WIDTH) / 2;
-        y = panel.getHeight() - HEIGHT;
+        X = (GamePanel.WIDTH - WIDTH) / 2;
+        Y = (GamePanel.HEIGHT - HEIGHT);
         minX = 0;
-        maxX = panel.getWidth() - WIDTH;
+        maxX = GamePanel.WIDTH - WIDTH;
+
+        speed = 5;
+        musicOnDestroy = 71;
     }
 
-    @Override
-    public Image getPicture() {
-        return picture;
-    }
 
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public boolean getClear() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     public void moveRight() {
-        x = Math.min(maxX, (x + SPEED));
+        X = Math.min(maxX, (X + speed));
     }
 
     public void moveLeft() {
-        x = Math.max(minX, (x - SPEED));
+        X = Math.max(minX, (X - speed));
     }
 
     public int getCentreX() {
-        return (WIDTH / 2) + this.getX();
+        return X + (WIDTH / 2);
     }
 
     public int getGunHeight() {
-        return this.getY() - HEIGHT;
+        return Y - HEIGHT;
     }
 
+    public boolean getClear() {
+        return false;
+    }
 }

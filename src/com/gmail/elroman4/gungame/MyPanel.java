@@ -1,4 +1,5 @@
 package com.gmail.elroman4.gungame;
+//package com.gmail.elroman4.gungame.objects;
 
 import com.gmail.elroman4.gungame.objects.Alien;
 import com.gmail.elroman4.gungame.objects.Bomb;
@@ -86,12 +87,12 @@ public class MyPanel extends JPanel {
 
     private void createGameObjects() {
         if (tank == null) {
-            tank = new Tank(this);
-            array_obj.add(tank);
+            tank = new Tank();
+            array_obj.add((GameObject) tank);
         }
         if (alien == null) {
-            alien = new Alien(this);
-            array_obj.add(alien);
+            alien = new Alien();
+            array_obj.add((GameObject) alien);
         }
     }
 
@@ -154,9 +155,9 @@ public class MyPanel extends JPanel {
 
         public void sendBomb(MyPanel myPanel) {
 
-                 bomb = new Bomb(myPanel ,tank.getCentreX(),tank.getGunHeight());
+                 bomb = new Bomb(tank.getCentreX(),tank.getGunHeight());
                   System.out.println("Создана бомба "+ bomb);
-                    array_obj.add(bomb);
+                    array_obj.add((GameObject) bomb);
     }
 
         @Override
